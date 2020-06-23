@@ -1,0 +1,4 @@
+[submodule "src/briefing"]
+	path = src/briefing
+	url = https://github.com/holtwick/briefing
+	branch = master

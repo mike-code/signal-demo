@@ -1,0 +1,17 @@
+ARG NODE_VERSION=12
+
+FROM keymetrics/pm2:${NODE_VERSION}-alpine
+
+WORKDIR /app
+ADD --chown=node:node ./src/briefing/signal /app
+RUN chown node:node /app
+
+USER node
+
+ENV NODE_ENV production
+ENV PORT 8001
+
+RUN npm install && npm cache clean --force
+
+CMD ["npm", "run", "serve"]
+

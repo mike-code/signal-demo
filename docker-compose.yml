@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  api:
+    image: keymetrics/pm2:12-alpine
+    volumes:
+      - ./src/briefing/signal:/app
+    working_dir: /app
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+      - DEBUG=true
+    ports:
+      - "8080:8080"
+    # I can't use debug script as --legacy-watch flag is required for Docker container
+    # https://github.com/remy/nodemon#application-isnt-restarting
+    command: "sh -c 'npm i && npm run env -- nodemon --inspect --legacy-watch ./server.js'"

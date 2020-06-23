@@ -1,0 +1,37 @@
+---
+# This file is solely for demo purposes and have some limitations
+kind: pipeline
+name: default
+
+steps:
+steps:
+- name: submodules
+  image: alpine/git
+  commands:
+  - git submodule update --init --recursive
+
+- name: build
+  image: docker
+  volumes:
+    - name: dockersock
+      path: /var/run/docker.sock
+  commands:
+    - docker build -t acme/signal:${DRONE_COMMIT} -f Dockerfile.prod .
+
+- name: run
+  image: acme/signal:${DRONE_COMMIT}
+  pull: never
+  environment:
+    DEBUG: true
+  detach: true
+
+- name: test
+  image: peterevans/curl-jq
+  commands:
+    - sleep 3
+    - curl -s http://run:8001/status | jq
+
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
